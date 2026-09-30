@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gemini AI Assistant</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🤖 Gemini AI Assistant</h1>
+
+        <p>Ask me anything!</p>
+
+        <textarea
+            id="question"
+            placeholder="Type your question here..."
+        ></textarea>
+
+        <button onclick="askGemini()">Ask Gemini</button>
+
+        <div class="response-box">
+
+            <h3>AI Response</h3>
+
+            <p id="answer">
+                Your answer will appear here...
+            </p>
+
+        </div>
+
+    </div>
+
+    <script>
+        async function askGemini() {
+
+            const question = document.getElementById("question").value;
+            const answer = document.getElementById("answer");
+
+            if (question.trim() === "") {
+                answer.innerText = "Please enter a question.";
+                return;
+            }
+
+            answer.innerText = "Thinking...";
+
+            try {
+
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: question
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.reply) {
+                    answer.innerText = data.reply;
+                } else {
+                    answer.innerText =
+                        data.error || "No response received.";
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                answer.innerText =
+                    "Sorry, something went wrong.";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
+
